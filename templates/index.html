@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% set gradient_map = {
+        'Music': 'from-blue-400 to-purple-500',
+        'Technology': 'from-green-400 to-blue-500',
+        'Food & Drink': 'from-yellow-400 to-red-500',
+        'Sports': 'from-indigo-400 to-teal-500',
+        'Arts': 'from-pink-400 to-rose-500',
+        'Business': 'from-orange-400 to-yellow-500'
+    } %}
+
+    {% set badge_map = {
+        'Music': 'bg-purple-100 text-purple-800',
+        'Technology': 'bg-blue-100 text-blue-800',
+        'Food & Drink': 'bg-red-100 text-red-800',
+        'Sports': 'bg-green-100 text-green-800',
+        'Arts': 'bg-pink-100 text-pink-800',
+        'Business': 'bg-yellow-100 text-yellow-800'
+    } %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventor - Discover Local Events</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+        }
+        .search-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .category-dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-calendar-alt text-3xl"></i>
+                    <h1 class="text-3xl font-bold"><a href="/" >Eventor</a></h1>
+                </div>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <!-- Hero Section -->
+            <div class="mt-16 mb-20 text-center">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Find the best events in your neighborhood</h2>
+                <p class="text-xl opacity-90 max-w-2xl mx-auto">Discover concerts, workshops, meetups and more happening near you</p>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="max-w-4xl mx-auto bg-white rounded-lg p-4 search-shadow relative -mb-10 fade-in">
+                <form method="GET" action="/" class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 relative">
+                        <input type="text" name="search" placeholder="Search for events..."
+                            value="{{ request.args.get('search', '') }}"
+                            class="w-full p-4 pl-12 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-800">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <!-- Category Dropdown (uses links, so stays as-is) -->
+                        <div>
+                            <select name="category"
+                                    class="w-full md:w-auto bg-gray-100 border border-gray-300 text-gray-800 font-semibold py-4 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="">All Categories</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat[0] }}"
+                                        {% if request.args.get('category') == cat[0]|string %}selected{% endif %}>
+                                        {{ cat[1] }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Search button submits the form -->
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>            
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 pt-20 pb-16">
+        <!-- Popular Categories -->
+        <section class="mb-16">
+            <h3 class="text-2xl font-bold mb-6">Popular Categories</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <a href="/?category=1" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <i class="fas fa-music text-3xl text-purple-500 mb-2"></i>
+                    <p class="font-medium">Music</p>
+                </a>
+                <a href="/?category=2" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <i class="fas fa-utensils text-3xl text-purple-500 mb-2"></i>
+                    <p class="font-medium">Food & Drink</p>
+                </a>
+                <a href="/?category=3" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <i class="fas fa-running text-3xl text-purple-500 mb-2"></i>
+                    <p class="font-medium">Sports</p>
+                </a>
+                <a href="/?category=4" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <i class="fas fa-paint-brush text-3xl text-purple-500 mb-2"></i>
+                    <p class="font-medium">Arts</p>
+                </a>
+                <a href="/?category=5" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <i class="fas fa-laptop-code text-3xl text-purple-500 mb-2"></i>
+                    <p class="font-medium">Technology</p>
+                </a>
+                <a href="/?category=6" class="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <i class="fas fa-briefcase text-3xl text-purple-500 mb-2"></i>
+                    <p class="font-medium">Business</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Upcoming Events -->
+        <section>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Upcoming Events</h3>
+                <a href="#" class="text-purple-600 hover:text-purple-800 font-medium">View all</a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for event in events %}
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
+                    <div class="h-48 bg-gradient-to-r {{ gradient_map.get(event[4], 'from-purple-400 to-blue-500') }}"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            {% if event[2] == 'HACKER CONFERENCE: RED TEAM EDITION - VIP ONLY' or event[2] == 'PRIVATE SECURITY BRIEFING - ADMIN ONLY' -%}
+                            <h4 class="font-bold text-lg" style="color: red;">{{ event[2] }}</h4>
+                            {%- else -%}
+                            <h4 class="font-bold text-lg">{{ event[2] }}</h4>
+                            {%- endif %}
+                            <span class="{{ badge_map.get(event[4], 'bg-purple-100 text-purple-800') }} text-xs font-semibold px-2.5 py-0.5 rounded">
+                                {{ event[4] }}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-4">{{ event[1] }}</p>
+                        <div class="flex items-center text-gray-500 text-sm">
+                            <i class="fas fa-calendar-day mr-2"></i>
+                            <span>{{ event[3] }}</span>
+                        </div>
+                        <div class="mt-3">
+                            <a href="/event?event_id={{ event[0] }}"
+                            class="text-purple-600 hover:text-purple-800 font-medium text-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-calendar-alt mr-2"></i> Eventor
+                    </h4>
+                    <p class="text-gray-400">Discover and book amazing events near you.</p>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Explore</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Popular Events</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">New Events</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Free Events</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Nearby Events</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Company</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Newsletter</h5>
+                    <p class="text-gray-400 mb-4">Subscribe to get updates on upcoming events.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg focus:outline-none text-gray-800 w-full">
+                        <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-r-lg transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Eventor. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
