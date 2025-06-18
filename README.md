@@ -12,3 +12,7 @@ Start the application.
 ```bash
 python3 app.py
 ```
+After you're done, stop the postgresql daemon. After all, you wouldn't want random services running all the time. :)
+```
+sudo systemctl stop postgresql
+```
